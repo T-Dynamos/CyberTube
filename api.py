@@ -13,7 +13,7 @@ class Downloader:
     def download(self):
 
         if "Linux" in platform.platform():
-            path = "/home/"os.getlogin()"/Cyber-Tube"
+            path = "/home/"+os.popen("whoami").read()
         elif "Windows" in platform.platform():
             path = os.getcwd()
         else:
