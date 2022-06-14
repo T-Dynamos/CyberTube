@@ -1,0 +1,32 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+
+MDScreen:
+	name:"Main"
+    AnchorLayout:
+        anchor_y:"top"
+        anchor_x:"left"
+        MDIconButton:
+            icon:"chevron-left"
+            on_press:app.screen_manager.current = "Home"
+	MDLabel:
+		pos_hint:{"center_x":0.5,"center_y":0.95}
+		text:"Video Details"
+		halign:"center"
+		font_name:"assets/Poppins-Bold.ttf"
+		font_size:"20sp"
+    Card:
+        pos_hint:{"center_x":0.5,"center_y":0.65}
+        radius:dp(20)
+        size_hint:None,None 
+        size:app.y-dp(15),"290dp"
+        FitImage:
+            radius:dp(20)
+            id:image
+            source:app.link_image
+	MDLabel:
+        id:title
+		pos_hint:{"center_x":0.5,"center_y":0.35}
+		text:app.link_title
+		halign:"center"
+		font_name:"assets/Poppins-Regular.ttf"
+		font_size:"20sp"

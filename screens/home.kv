@@ -1,3 +1,5 @@
+#: import get_color_from_hex kivy.utils.get_color_from_hex
+
 MDScreen:
 	name:"Home"
 	AnchorLayout:
@@ -12,5 +14,38 @@ MDScreen:
 		pos_hint:{"center_x":0.5,"center_y":0.7}
 		text:"Enter video url to continue"
 		halign:"center"
-		font_name:"assets/Poppins-Regular.ttf"
+		font_name:"assets/Poppins-Bold.ttf"
 		font_size:"20sp"
+	BoxLayout:
+		pos_hint:{"center_x":0.5,"center_y":0.6}
+		size_hint:None,None 
+		size:app.y-dp(20),dp(60)
+		MDTextField:
+			radius:[dp(20),dp(20),dp(20),dp(20)]
+			id:url
+			on_text:app.check_url(show_toast=False)
+			mode:"fill"
+			hint_text:"Enter video url"
+			font_name_hint_text:"assets/Poppins-Regular.ttf"
+			font_name:"assets/Poppins-Regular.ttf"
+			icon_right:"youtube"
+			icon_right_theme_color:"Custom"
+			icon_right_color:1,0,0,1
+	BoxLayout:
+		pos_hint:{"center_x":0.5,"center_y":0.5}
+		size_hint:None,None 
+		size:app.y-dp(20),dp(60)
+		padding:dp(10)
+		MDLabel:
+			id:url_status
+			text:"URL is not vaild" if url.text != "" else "Enter the URL"
+			font_name:"assets/Poppins-Regular.ttf"
+			theme_text_color:"Custom"
+			text_color:get_color_from_hex("#C97174")
+	MDFlatButton:
+		id:url_status_button
+		pos_hint:{"center_x":0.5,"center_y":0.4}
+		text:"Proceed"
+		md_bg_color:get_color_from_hex("#C97174")
+		on_press:app.check_url(show_toast=True)
+
