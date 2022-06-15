@@ -51,13 +51,18 @@ class CyberTube(MDApp):
 
 	link_image = ""
 	link_title = ""
+	total_video_files = 0
+	total_audio_files = 0
+	total_files = 0
+	video_links = []
+	audio_link = []
+
 	modal = None
 
 	screen_manager = screen_manager
 
 	def build(self):
 		screen_manager.add_widget(Builder.load_file("screens/home.kv"))
-		screen_manager.add_widget(Builder.load_file("screens/main.kv"))
 		return screen_manager
 
 	def check_url(self,show_toast=True):
@@ -80,26 +85,8 @@ class CyberTube(MDApp):
 			screen_manager.get_screen("Home").ids.url_status_button.md_bg_color = get_color_from_hex("#C97174")
 			self.vaild = True
 
-	def spinner(self,*largs):
-		self.modal = Builder.load_string("""
-ModalView:
-	background_color:[0,0,0,0]
-	size_hint:None,None
-	size:app.y,app.x
-	overlay_color:(0, 0, 0, 0)
-	MDBoxLayout:
-		md_bg_color:0,0,0,0.7
-		size_hint:None,None
-		size:app.y,app.x
-		RelativeLayout:
-			MDSpinner:
-				pos_hint:{"center_x":0.5,"center_y":0.38}
-				size_hint: None, None
-				size: dp(40), dp(40)
-				pos_hint: {'center_x': .5, 'center_y': .5}
-				palette:[app.theme_cls.primary_light,app.theme_cls.accent_light,app.theme_cls.primary_light,app.theme_cls.accent_light]
-
-	""")
+	def spinner(self,open=False,*largs):
+		self.modal = Builder.load_file("screens/util.kv")
 		self.modal.open()
 
 	def get_url_info(self,*largs):
@@ -107,10 +94,15 @@ ModalView:
 		link_info  = YouTube(self.url)
 		self.link_image =  link_info.thumbnail_url
 		self.link_title =  link_info.title
+		self.total_video_files = len(link_info.streams.filter(file_extension="mp4",only_video=True))
+		self.total_audio_files = len(link_info.streams.filter(file_extension="webm",only_audio=True))
+		self.total_files = self.total_video_files + self.total_audio_files
+		self.video_links = link_info.streams.filter(file_extension="mp4",only_video=True)
+		self.audio_links = link_info.streams.filter(file_extension="webm",only_audio=True)
+		print("Done")
 		self.modal.dismiss()
 		def change_screen(*largs):
+			screen_manager.add_widget(Builder.load_file("screens/main.kv"))
 			screen_manager.current = "Main"
-			screen_manager.get_screen("Main").ids.image.source = self.link_image
-			screen_manager.get_screen("Main").ids.title.text = self.link_title
 		threadRun(change_screen,())
 CyberTube().run()

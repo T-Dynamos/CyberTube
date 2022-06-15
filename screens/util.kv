@@ -1,0 +1,26 @@
+ModalView:
+	background_color:[0,0,0,0]
+	size_hint:None,None
+	size:app.y,app.x
+	overlay_color:(0, 0, 0, 0)
+	MDBoxLayout:
+		md_bg_color:0,0,0,0.7
+		size_hint:None,None
+		size:app.y,app.x
+		RelativeLayout:
+			MDSpinner:
+				pos_hint:{"center_x":0.5,"center_y":0.38}
+				size_hint: None, None
+				size: dp(40), dp(40)
+				pos_hint: {'center_x': .5, 'center_y': .5}
+				palette:[app.theme_cls.primary_light,app.theme_cls.accent_light,app.theme_cls.primary_light,app.theme_cls.accent_light]
+
+			MDLabel:
+				halign:"center"
+				pos_hint:{"center_x":0.5,"center_y":0.3}
+				text:"Fetching Video Details"
+				font_name:"assets/Poppins-Bold.ttf"
+				font_size:"25sp"
+				theme_text_color:"Custom"
+				text_color:app.theme_cls.primary_light
+				
