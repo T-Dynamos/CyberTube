@@ -21,7 +21,7 @@ from pytube import YouTube
 
 screen_manager = ScreenManager()
 
-if platform != "Android":
+if platform != "android":
 	Window.size = (dp(400),dp(600))
 
 class Card(MDCard,FakeRectangularElevationBehavior):
