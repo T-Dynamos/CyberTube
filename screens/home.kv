@@ -7,17 +7,24 @@ MDScreen:
 		Image:
 			source:"assets/wave.png"
 			size_hint:None,None 
-			size:app.y,"290dp"
+			size:app.y+dp(70),"450dp"
 			allow_stretch:True
 			keep_ratio: False
+	Image:
+		pos_hint:{"center_x":0.2,"center_y":0.86}
+		source:"logo.png"
+		size_hint:None,None 
+		size:dp(100),dp(100)
+		allow_stretch:True
+		keep_ratio: True			
 	MDLabel:
-		pos_hint:{"center_x":0.5,"center_y":0.7}
+		pos_hint:{"center_x":0.5,"center_y":0.6}
 		text:"Enter video url to continue"
 		halign:"center"
 		font_name:"assets/Poppins-Bold.ttf"
 		font_size:"20sp"
 	BoxLayout:
-		pos_hint:{"center_x":0.5,"center_y":0.6}
+		pos_hint:{"center_x":0.5,"center_y":0.5}
 		size_hint:None,None 
 		size:app.y-dp(20),dp(60)
 		MDTextField:
@@ -32,7 +39,7 @@ MDScreen:
 			icon_right_theme_color:"Custom"
 			icon_right_color:1,0,0,1
 	BoxLayout:
-		pos_hint:{"center_x":0.5,"center_y":0.5}
+		pos_hint:{"center_x":0.5,"center_y":0.4}
 		size_hint:None,None 
 		size:app.y-dp(20),dp(60)
 		padding:dp(10)
@@ -44,8 +51,27 @@ MDScreen:
 			text_color:get_color_from_hex("#C97174")
 	MDFlatButton:
 		id:url_status_button
-		pos_hint:{"center_x":0.5,"center_y":0.4}
+		pos_hint:{"center_x":0.5,"center_y":0.3}
 		text:"Proceed"
 		md_bg_color:get_color_from_hex("#C97174")
 		on_press:app.check_url(show_toast=True)
-
+	Card:
+		pos_hint:{"center_x":0.5,"center_y":0.13}
+		size_hint:None,None
+		size:app.y-dp(20),dp(120)
+		md_bg_color:app.theme_cls.bg_darkest
+		padding:dp(10)
+		BoxLayout:
+			orientation:"vertical"
+			MDLabel:
+				text:"Pytube Version     : "+app.pytube_version
+				font_name:"assets/Poppins-Regular.ttf"
+			MDLabel:
+				text:"Kivy Version           : "+app.kivy_version
+				font_name:"assets/Poppins-Regular.ttf"
+			MDLabel:
+				text:"Python Version     : "+app.python_version
+				font_name:"assets/Poppins-Regular.ttf"
+			MDLabel:
+				text:"Kivymd Version    :"+app.kivy_md_version
+				font_name:"assets/Poppins-Regular.ttf"

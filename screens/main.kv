@@ -1,5 +1,5 @@
 #: import get_color_from_hex kivy.utils.get_color_from_hex
-
+#: import _thread _thread
 MDScreen:
 	name:"Main"
     AnchorLayout:
@@ -7,7 +7,7 @@ MDScreen:
         anchor_x:"left"
         MDIconButton:
             icon:"chevron-left"
-            on_press:app.screen_manager.current = "Home"
+            on_press:app.screen_manager.transition.direction="right";app.screen_manager.current = "Home"
 	MDLabel:
 		pos_hint:{"center_x":0.5,"center_y":0.95}
 		text:"Video Details"
@@ -36,6 +36,7 @@ MDScreen:
         size_hint:None,None 
         ripple_behavior:True
         size:app.y-dp(15),"50dp"
+        on_press:_thread.start_new_thread(app.open_video_downloader,())
         md_bg_color:app.theme_cls.accent_light
         RelativeLayout:
             BoxLayout:

@@ -1,0 +1,30 @@
+MDScreen:
+    id:video
+    name:"video"
+    
+    MDLabel:
+        pos_hint:{"center_x":0.5,"center_y":0.95}
+        text:"Download Video"
+        halign:"center"
+        font_name:"assets/Poppins-Bold.ttf"
+    AnchorLayout:
+        anchor_y:"top"
+        anchor_x:"left"
+        MDIconButton:
+            icon:"chevron-left"
+            on_press:app.screen_manager.current = "Home"
+    AnchorLayout:
+        Card:
+            size_hint:None,None
+            size:app.y-dp(20),app.x-dp(100)
+            radius:dp(20)
+            md_bg_color:app.theme_cls.accent_light
+            ScrollView:
+                GridLayout:
+                    cols:1
+                    spacing:dp(10)
+                    id:card_container
+                    MDLabel:
+
+        
+
