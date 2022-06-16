@@ -21,7 +21,7 @@ MDScreen:
 		pos_hint:{"center_x":0.5,"center_y":0.6}
 		text:"Enter video url to continue"
 		halign:"center"
-		font_name:"assets/Poppins-Bold.ttf"
+		font_name:"assets/KdamThmorPro-Regular.ttf"
 		font_size:"20sp"
 	BoxLayout:
 		pos_hint:{"center_x":0.5,"center_y":0.5}
@@ -64,14 +64,28 @@ MDScreen:
 		BoxLayout:
 			orientation:"vertical"
 			MDLabel:
-				text:"Pytube Version     : "+app.pytube_version
+				text:"Pytube Version"
 				font_name:"assets/Poppins-Regular.ttf"
 			MDLabel:
-				text:"Kivy Version           : "+app.kivy_version
+				text:"Kivy Version"         
 				font_name:"assets/Poppins-Regular.ttf"
 			MDLabel:
-				text:"Python Version     : "+app.python_version
+				text:"Python Version "  
 				font_name:"assets/Poppins-Regular.ttf"
 			MDLabel:
-				text:"Kivymd Version    :"+app.kivy_md_version
+				text:"App Version"   
 				font_name:"assets/Poppins-Regular.ttf"
+		BoxLayout:
+			orientation:"vertical"
+			MDLabel:
+				text:": "+app.pytube_version
+				font:"assets/KdamThmorPro-Regular.ttf"
+			MDLabel:
+				text:": "+app.kivy_version
+				font:"assets/KdamThmorPro-Regular.ttf"
+			MDLabel:
+				text:": "+app.python_version
+				font:"assets/KdamThmorPro-Regular.ttf"
+			MDLabel:
+				text:": "+app.__version__
+				font:"assets/KdamThmorPro-Regular.ttf"

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-__version__ = 1.0
+__version__ = "1.0"
 
 import kivy
 from kivymd.app import MDApp
@@ -47,12 +47,12 @@ def Toast(string,*largs):
 videoCard = """
 AnchorLayout:
 	size_hint:None,None
-	size:app.y-dp(20),"50dp"
+	size:app.y,"50dp"
 	Card:
 		radius:dp(10)
 		size_hint:None,None 
 		ripple_behavior:True
-		size:app.y-dp(25),"50dp"
+		size:app.y-dp(30),"50dp"
 		md_bg_color:app.theme_cls.primary_light
 		RelativeLayout:
 			BoxLayout:
@@ -91,10 +91,10 @@ class CyberTube(MDApp):
 
 	modal = None
 
-	pytube_version = pytube.__version__
-	kivy_version = kivy.__version__
-	python_version = str(sys.version).split("(")[0]+str(sys.version).split(")")[-1]
-	kivy_md_version = " 1.0.0dev-master"
+	pytube_version = str(pytube.__version__)
+	kivy_version = str(kivy.__version__)
+	python_version = str(sys.version).split("(")[0]
+	__version__ = __version__
 
 
 	screen_manager = screen_manager
@@ -125,21 +125,24 @@ class CyberTube(MDApp):
 			screen_manager.get_screen("Home").ids.url_status_button.md_bg_color = get_color_from_hex("#C97174")
 			self.vaild = True
 
-	def spinner(self,open=False,*largs):
+	def spinner(self,text,*largs):
 		self.modal = Builder.load_file("screens/util.kv")
 		self.modal.open()
 
 	def get_url_info(self,*largs):
 		threadRun(self.spinner,())
-		link_info  = YouTube(self.url)
-		self.link_image =  link_info.thumbnail_url
-		self.link_title =  link_info.title
-		self.total_video_files = len(link_info.streams.filter(file_extension="mp4",only_video=True))
-		self.total_audio_files = len(link_info.streams.filter(file_extension="webm",only_audio=True))
-		self.total_files = self.total_video_files + self.total_audio_files
-		self.video_links = link_info.streams.filter(file_extension="mp4",only_video=True)
-		self.audio_links = link_info.streams.filter(file_extension="webm",only_audio=True)
-		print("Done")
+		try:
+			link_info  = YouTube(self.url)
+			self.link_image =  link_info.thumbnail_url
+			self.link_title =  link_info.title
+			self.total_video_files = len(link_info.streams.filter(file_extension="mp4",only_video=True))
+			self.total_audio_files = len(link_info.streams.filter(file_extension="webm",only_audio=True))
+			self.total_files = self.total_video_files + self.total_audio_files
+			self.video_links = link_info.streams.filter(file_extension="mp4",only_video=True)
+			self.audio_links = link_info.streams.filter(file_extension="webm",only_audio=True)
+		except Exception:
+			Toast("No or Slow Intenet")
+			return self.modal.dismiss()
 		self.modal.dismiss()
 		def change_screen(*largs):
 			screen_manager.add_widget(Builder.load_file("screens/main.kv"))
@@ -156,16 +159,39 @@ class CyberTube(MDApp):
 			screen_manager.add_widget(Builder.load_file("screens/video.kv"))
 			screen_manager.current ="video"
 		threadRun(change,())
+		time.sleep(0.5)
+		threadRun(self.spinner,())
 		for count,links in enumerate(self.video_links):
+			time.sleep(0.5)
 			self.pos = self.pos-0.1
 			self.link_quality = self.video_links[count].resolution
-			self.link_size = str((self.video_links[count].filesize//1024)/1024)+" MB"
-			print(count,self.pos,self.link_quality,self.link_size)
-			time.sleep(0.5)
+			self.link_size = str((self.video_links[count].filesize/1024)//1024)+" MB"
 			def addwidget(*largs):
 				cardVideo = Builder.load_string(videoCard)
 				screen_manager.get_screen("video").ids.card_container.add_widget(cardVideo)
 			threadRun(addwidget,())
-			
+		threadRun(self.modal.dismiss,())
+
+	def open_audio_downloader(self,*largs):
+		import time
+		def change(*largs):
+			if screen_manager.has_screen("audio"):
+				screen_manager.remove_widget(screen_manager.get_screen("audio"))
+
+			screen_manager.add_widget(Builder.load_file("screens/audio.kv"))
+			screen_manager.current ="audio"
+		threadRun(change,())
+		time.sleep(0.5)
+		threadRun(self.spinner,())
+		for count,links in enumerate(self.audio_links):
+			time.sleep(0.5)
+			self.pos = self.pos-0.1
+			self.link_quality = self.audio_links[count].resolution
+			self.link_size = str((self.audio_links[count].filesize/1024)//1024)+" MB"
+			def addwidget(*largs):
+				cardaudio = Builder.load_string(audioCard)
+				screen_manager.get_screen("audio").ids.card_container.add_widget(cardaudio)
+			threadRun(addwidget,())
+		threadRun(self.modal.dismiss,())			
 
 CyberTube().run()
