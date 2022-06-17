@@ -61,6 +61,7 @@ MDScreen:
         ripple_behavior:True
         size:app.y-dp(15),"50dp"
         md_bg_color:app.theme_cls.primary_light
+        on_press:_thread.start_new_thread(app.open_audio_downloader,())
         RelativeLayout:
             BoxLayout:
                 padding:dp(10)

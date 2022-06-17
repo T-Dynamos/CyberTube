@@ -9,6 +9,8 @@ from kivy.uix.screenmanager import *
 from kivy.metrics import dp
 from functools import partial
 from kivymd.uix.card import MDCard
+import threading
+from kivy.network.urlrequest import UrlRequest
 import sys
 from kivymd.uix.behaviors import *
 from kivy.core.window import *
@@ -19,10 +21,16 @@ import _thread
 from kivy.clock import Clock
 import pytube
 from pytube import YouTube
+from kivy.config import Config
+
+
 
 screen_manager = ScreenManager()
 
 if platform != "android":
+	Config.set('kivy', 'window_icon', 'logo.png')
+	Config.set('kivy', 'height','600')
+	Config.set('kivy','width','400')
 	Window.size = (dp(400),dp(600))
 
 class Card(MDCard,FakeRectangularElevationBehavior):
@@ -37,12 +45,35 @@ def Toast1(string,*largs):
 
 
 def Toast(string,*largs):
-
 	if platform=="android":
 		Toast2(string,gravity=80)
 
 	else:
 		threadRun(Toast1,string)
+
+
+def download_file(self,link,filename,*largs):
+	def change_screen(*largs):
+		if screen_manager.has_screen("downloader"):
+			screen_manager.remove_widget(screen_manager.get_screen("downloader"))
+		screen_manager.add_widget(Builder.load_file("screens/downloader.kv"))
+		screen_manager.current = "downloader"
+	threadRun(change_screen,())
+	file_path = "/home/tdynamos/Downloads/"+filename
+	def update_progress(request, current_size, total_size,*largs):
+		print(current_size,total_size)
+		def run(*largs):
+			try:
+				screen_manager.get_screen("downloader").ids.progressbar.value = current_size / total_size
+			except Exception as e:
+				print(str(e))
+		threadRun(run,())
+	def message():
+		Toast("File downloaded successfully")
+	print("Started"+link)
+	req = UrlRequest(link, on_progress=update_progress,
+					chunk_size=1024, on_success=message,
+					file_path=file_path)
 
 videoCard = """
 AnchorLayout:
@@ -54,6 +85,36 @@ AnchorLayout:
 		ripple_behavior:True
 		size:app.y-dp(30),"50dp"
 		md_bg_color:app.theme_cls.primary_light
+		on_press:_thread.start_new_thread(app.download_file,(app.link,"test.webm"))
+		RelativeLayout:
+			BoxLayout:
+				padding:dp(10)
+				MDLabel:
+					pos_hint:{"center_x":0.5,"center_y":0.5}
+					text:"Download "+app.link_quality
+					font_name:"assets/Poppins-Regular.ttf"
+				MDLabel:
+					id:text_total_audio
+					pos_hint:{"center_x":0.5,"center_y":0.5}
+					text:"File size "+app.link_size
+					font_name:"assets/Poppins-Regular.ttf"
+					font_size:"10sp"
+				MDIconButton:
+					pos_hint:{"center_x":0.9,"center_y":0.5}
+					icon:"download"
+"""
+
+audioCard = """
+AnchorLayout:
+	size_hint:None,None
+	size:app.y,"50dp"
+	Card:
+		radius:dp(10)
+		size_hint:None,None 
+		ripple_behavior:True
+		size:app.y-dp(30),"50dp"
+		md_bg_color:app.theme_cls.accent_light
+		on_press:_thread.start_new_thread(app.download_file,(app.download_link,"test.webm"))
 		RelativeLayout:
 			BoxLayout:
 				padding:dp(10)
@@ -98,6 +159,8 @@ class CyberTube(MDApp):
 
 
 	screen_manager = screen_manager
+	download_link = ""
+	download_file = download_file
 
 	#https://youtu.be/T0lzuaX_7WM
 
@@ -139,7 +202,7 @@ class CyberTube(MDApp):
 			self.total_audio_files = len(link_info.streams.filter(file_extension="webm",only_audio=True))
 			self.total_files = self.total_video_files + self.total_audio_files
 			self.video_links = link_info.streams.filter(file_extension="mp4",only_video=True)
-			self.audio_links = link_info.streams.filter(file_extension="webm",only_audio=True)
+			self.audio_links = link_info.streams.filter(file_extension="webm",only_audio=True)[::-1]
 		except Exception:
 			Toast("No or Slow Intenet")
 			return self.modal.dismiss()
@@ -157,6 +220,7 @@ class CyberTube(MDApp):
 				screen_manager.remove_widget(screen_manager.get_screen("video"))
 
 			screen_manager.add_widget(Builder.load_file("screens/video.kv"))
+			screen_manager.transition.direction="left"
 			screen_manager.current ="video"
 		threadRun(change,())
 		time.sleep(0.5)
@@ -166,6 +230,7 @@ class CyberTube(MDApp):
 			self.pos = self.pos-0.1
 			self.link_quality = self.video_links[count].resolution
 			self.link_size = str((self.video_links[count].filesize/1024)//1024)+" MB"
+			self.download_link = self.video_links[count].url
 			def addwidget(*largs):
 				cardVideo = Builder.load_string(videoCard)
 				screen_manager.get_screen("video").ids.card_container.add_widget(cardVideo)
@@ -179,6 +244,7 @@ class CyberTube(MDApp):
 				screen_manager.remove_widget(screen_manager.get_screen("audio"))
 
 			screen_manager.add_widget(Builder.load_file("screens/audio.kv"))
+			screen_manager.transition.direction="left"
 			screen_manager.current ="audio"
 		threadRun(change,())
 		time.sleep(0.5)
@@ -186,8 +252,9 @@ class CyberTube(MDApp):
 		for count,links in enumerate(self.audio_links):
 			time.sleep(0.5)
 			self.pos = self.pos-0.1
-			self.link_quality = self.audio_links[count].resolution
+			self.link_quality = self.audio_links[count].abr
 			self.link_size = str((self.audio_links[count].filesize/1024)//1024)+" MB"
+			self.download_link = self.audio_links[count].url
 			def addwidget(*largs):
 				cardaudio = Builder.load_string(audioCard)
 				screen_manager.get_screen("audio").ids.card_container.add_widget(cardaudio)

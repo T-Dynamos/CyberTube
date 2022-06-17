@@ -1,0 +1,21 @@
+MDScreen:
+    name:'downloader'
+    
+    MDLabel:
+        pos_hint:{"center_x":0.5,"center_y":0.95}
+        text:"Downloading File"
+        halign:"center"
+        font_name:"assets/Poppins-Bold.ttf"
+    AnchorLayout:
+        anchor_y:"top"
+        anchor_x:"left"
+        MDIconButton:
+            icon:"chevron-left"
+            on_press:app.screen_manager.transition.direction="right";app.screen_manager.current = "Home"
+    AnchorLayout:
+        size_hint:None,None
+        size:app.y,dp(10)
+        MDProgressBar:
+            id:progressbar
+            max:1
+            value:0.1
