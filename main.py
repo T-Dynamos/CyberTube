@@ -22,6 +22,8 @@ from kivy.clock import Clock
 import pytube
 from pytube import YouTube
 from kivy.config import Config
+import os
+import time
 
 
 
@@ -59,7 +61,10 @@ def download_file(self,link,filename,*largs):
 		screen_manager.add_widget(Builder.load_file("screens/downloader.kv"))
 		screen_manager.current = "downloader"
 	threadRun(change_screen,())
-	file_path = "/home/tdynamos/Downloads/"+filename
+	path = ("/home/"+str(os.popen("whoami").read().split("\n")[0])+"/CyberTube") if platform != "android" else "/sdcard/CyberTube"
+	if os.path.exists(path) == False:
+		os.mkdir(path)
+	file_path = path+"/"+filename
 	def update_progress(request, current_size, total_size,*largs):
 		print(current_size,total_size)
 		def run(*largs):
@@ -68,70 +73,18 @@ def download_file(self,link,filename,*largs):
 			except Exception as e:
 				print(str(e))
 		threadRun(run,())
-	def message():
+	def message(*largs):
 		Toast("File downloaded successfully")
-	print("Started"+link)
+		time.sleep(1)
+		Toast("Saved as  : "+file_path)
+		screen_manager.current = "Main"
 	req = UrlRequest(link, on_progress=update_progress,
 					chunk_size=1024, on_success=message,
 					file_path=file_path)
 
-videoCard = """
-AnchorLayout:
-	size_hint:None,None
-	size:app.y,"50dp"
-	Card:
-		radius:dp(10)
-		size_hint:None,None 
-		ripple_behavior:True
-		size:app.y-dp(30),"50dp"
-		md_bg_color:app.theme_cls.primary_light
-		on_press:_thread.start_new_thread(app.download_file,(app.link,"test.webm"))
-		RelativeLayout:
-			BoxLayout:
-				padding:dp(10)
-				MDLabel:
-					pos_hint:{"center_x":0.5,"center_y":0.5}
-					text:"Download "+app.link_quality
-					font_name:"assets/Poppins-Regular.ttf"
-				MDLabel:
-					id:text_total_audio
-					pos_hint:{"center_x":0.5,"center_y":0.5}
-					text:"File size "+app.link_size
-					font_name:"assets/Poppins-Regular.ttf"
-					font_size:"10sp"
-				MDIconButton:
-					pos_hint:{"center_x":0.9,"center_y":0.5}
-					icon:"download"
-"""
+videoCard = open("screens/cards.kv","r").read().split("~~~")[0]
 
-audioCard = """
-AnchorLayout:
-	size_hint:None,None
-	size:app.y,"50dp"
-	Card:
-		radius:dp(10)
-		size_hint:None,None 
-		ripple_behavior:True
-		size:app.y-dp(30),"50dp"
-		md_bg_color:app.theme_cls.accent_light
-		on_press:_thread.start_new_thread(app.download_file,(app.download_link,"test.webm"))
-		RelativeLayout:
-			BoxLayout:
-				padding:dp(10)
-				MDLabel:
-					pos_hint:{"center_x":0.5,"center_y":0.5}
-					text:"Download "+app.link_quality
-					font_name:"assets/Poppins-Regular.ttf"
-				MDLabel:
-					id:text_total_audio
-					pos_hint:{"center_x":0.5,"center_y":0.5}
-					text:"File size "+app.link_size
-					font_name:"assets/Poppins-Regular.ttf"
-					font_size:"10sp"
-				MDIconButton:
-					pos_hint:{"center_x":0.9,"center_y":0.5}
-					icon:"download"
-"""
+audioCard = open("screens/cards.kv","r").read().split("~~~")[-1]
 
 
 class CyberTube(MDApp):
@@ -167,7 +120,9 @@ class CyberTube(MDApp):
 	def build(self):
 		screen_manager.add_widget(Builder.load_file("screens/home.kv"))
 		return screen_manager
-
+	def show_warn(self):
+		self.screen_manager.transition.direction="right"
+		self.screen_manager.current = "Main"
 	def check_url(self,show_toast=True):
 		if "https://" in screen_manager.get_screen("Home").ids.url.text or "http://" in screen_manager.get_screen("Home").ids.url.text:
 			self.vaild = True
@@ -242,7 +197,6 @@ class CyberTube(MDApp):
 		def change(*largs):
 			if screen_manager.has_screen("audio"):
 				screen_manager.remove_widget(screen_manager.get_screen("audio"))
-
 			screen_manager.add_widget(Builder.load_file("screens/audio.kv"))
 			screen_manager.transition.direction="left"
 			screen_manager.current ="audio"

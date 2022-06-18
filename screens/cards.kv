@@ -1,0 +1,55 @@
+AnchorLayout:
+	size_hint:None,None
+	size:app.y,"50dp"
+	Card:
+		radius:dp(10)
+		size_hint:None,None 
+		ripple_behavior:True
+		size:app.y-dp(30),"50dp"
+		md_bg_color:app.theme_cls.primary_light
+		on_press:_thread.start_new_thread(app.download_file,(app.download_link,"_".join(app.link_title.split(" "))+".mp4"))
+		RelativeLayout:
+			BoxLayout:
+				padding:dp(10)
+				MDLabel:
+					pos_hint:{"center_x":0.5,"center_y":0.5}
+					text:"Download "+app.link_quality
+					font_name:"assets/Poppins-Regular.ttf"
+				MDLabel:
+					id:text_total_audio
+					pos_hint:{"center_x":0.5,"center_y":0.5}
+					text:"File size "+app.link_size
+					font_name:"assets/Poppins-Regular.ttf"
+					font_size:"10sp"
+				MDIconButton:
+					pos_hint:{"center_x":0.9,"center_y":0.5}
+					icon:"download"
+					
+~~~
+
+AnchorLayout:
+	size_hint:None,None
+	size:app.y,"50dp"
+	Card:
+		radius:dp(10)
+		size_hint:None,None 
+		ripple_behavior:True
+		size:app.y-dp(30),"50dp"
+		md_bg_color:app.theme_cls.accent_light
+		on_press:_thread.start_new_thread(app.download_file,(app.download_link,"_".join(app.link_title.split(" "))+".mp3"))
+		RelativeLayout:
+			BoxLayout:
+				padding:dp(10)
+				MDLabel:
+					pos_hint:{"center_x":0.5,"center_y":0.5}
+					text:"Download "+app.link_quality
+					font_name:"assets/Poppins-Regular.ttf"
+				MDLabel:
+					id:text_total_audio
+					pos_hint:{"center_x":0.5,"center_y":0.5}
+					text:"File size "+app.link_size
+					font_name:"assets/Poppins-Regular.ttf"
+					font_size:"10sp"
+				MDIconButton:
+					pos_hint:{"center_x":0.9,"center_y":0.5}
+					icon:"download"

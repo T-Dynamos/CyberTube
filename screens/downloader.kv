@@ -11,11 +11,17 @@ MDScreen:
         anchor_x:"left"
         MDIconButton:
             icon:"chevron-left"
-            on_press:app.screen_manager.transition.direction="right";app.screen_manager.current = "Home"
+            on_press:app.show_warn()
     AnchorLayout:
         size_hint:None,None
         size:app.y,dp(10)
         MDProgressBar:
             id:progressbar
             max:1
-            value:0.1
+            value:0
+            radius:dp(20)
+    MDLabel:
+        halign:"center"
+        text:str(progressbar.value).split(".")[-1][:2]+" %"
+        font:"assets/KdamThmorPro-Regular.ttf"
+        font_size:"30sp"
