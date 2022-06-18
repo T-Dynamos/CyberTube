@@ -1,0 +1,33 @@
+version: 2.1
+executors:
+  build-android:
+    docker:
+      - image: cimg/base:stable
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
+jobs:
+  build-for-android:
+    executor: build-android
+    steps:
+      - run: |
+          sudo apt update
+          sudo apt install python3
+          sudo apt install -y git zip unzip openjdk-13-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --user --upgrade Cython==0.29.19 virtualenv 
+          export PATH=$PATH:~/.local/bin/
+          git clone https://github.com/T-Dynamos/CyberTube ~/CyberTube
+          cd ~/CyberTube
+          pip3 install buildozer
+          BUILDOZER_WARN_ON_ROOT=0
+          APP_ANDROID_ACCEPT_SDK_LICENSE=1
+          echo "Building apk for android"
+          buildozer android debug
+      - store_artifacts:
+          path: ~/CyberTube/bin/cybertube-1.0-armeabi-v7a-debug.apk
+          destination: cybertube-1.0-armeabi-v7a-debug.apk
+
+workflows:
+  build-android:
+    jobs:
+      - build-for-android
