@@ -158,8 +158,8 @@ class CyberTube(MDApp):
 			self.total_files = self.total_video_files + self.total_audio_files
 			self.video_links = link_info.streams.filter(file_extension="mp4",only_video=True)
 			self.audio_links = link_info.streams.filter(file_extension="webm",only_audio=True)[::-1]
-		except Exception:
-			Toast("No or Slow Intenet")
+		except Exception as e:
+			Toast("No or Slow Intenet"+str(e))
 			return self.modal.dismiss()
 		self.modal.dismiss()
 		def change_screen(*largs):
